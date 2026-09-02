@@ -2,17 +2,17 @@
 #include <ctime>
 using namespace std;
 
-int comparisons = 0;
+int iterations = 0;
 int swaps = 0;
 
 // Bubble Sort
-void bubbleSort(int arr[])
+void bubbleSort(int arr[], int n)
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < n - 1; i++)
     {
-        for (int j = 0; j < 4 - i; j++)
+        for (int j = 0; j < n - 1 - i; j++)
         {
-            comparisons++;
+            iterations++;
 
             if (arr[j] > arr[j + 1])
             {
@@ -27,16 +27,16 @@ void bubbleSort(int arr[])
 }
 
 // Insertion Sort
-void insertionSort(int arr[])
+void insertionSort(int arr[], int n)
 {
-    for (int i = 1; i < 5; i++)
+    for (int i = 1; i < n; i++)
     {
         int key = arr[i];
         int j = i - 1;
 
         while (j >= 0 && arr[j] > key)
         {
-            comparisons++;
+            iterations++;
 
             arr[j + 1] = arr[j];
             j--;
@@ -58,13 +58,13 @@ int partition(int arr[], int left, int right)
     {
         while (i <= right && arr[i] <= pivot)
         {
-            comparisons++;
+            iterations++;
             i++;
         }
 
         while (j >= left && arr[j] > pivot)
         {
-            comparisons++;
+            iterations++;
             j--;
         }
 
@@ -99,89 +99,102 @@ void quickSort(int arr[], int left, int right)
     }
 }
 
-void selectionSort (int arr[])
+// Selection Sort
+void selectionSort(int arr[], int n)
 {
-    for (int i = 0; i < 4; i++){
-
+    for (int i = 0; i < n - 1; i++)
+    {
         int min_idx = i;
 
-        for (int j =i + 1; j < 5; j++){
+        for (int j = i + 1; j < n; j++)
+        {
+            iterations++;
 
-            comparisons ++;
-
-            if(arr[j] < arr[min_idx]) {
+            if (arr[j] < arr[min_idx])
+            {
                 min_idx = j;
             }
-
         }
 
         swap(arr[i], arr[min_idx]);
-        swaps ++;
-
+        swaps++;
     }
 }
+
 int main()
 {
-    int arr[5];
-
-    cout << "Enter 5 array elements: ";
-
-    for (int i = 0; i < 5; i++)
-    {
-        cin >> arr[i];
-    }
-
     int choice;
 
-    cout << "\n1. Bubble Sort";
-    cout << "\n2. Insertion Sort";
-    cout << "\n3. Quick Sort";
-    cout << "\n4. Selection Sort";
-    cout << "\nEnter your choice: ";
-    cin >> choice;
+    int sizes[] = {10, 50, 100, 1000, 5000};
 
-    clock_t start = clock();
-
-    switch (choice)
+    do
     {
-    case 1:
-        bubbleSort(arr);
-        break;
+        cout << "\nSORTING ALGORITHMS";
+        cout << "\n1. Bubble Sort";
+        cout << "\n2. Insertion Sort";
+        cout << "\n3. Quick Sort";
+        cout << "\n4. Selection Sort";
+        cout << "\n5. Exit";
 
-    case 2:
-        insertionSort(arr);
-        break;
+        cout << "\nEnter your choice: ";
+        cin >> choice;
 
-    case 3:
-        quickSort(arr, 0, 4);
-        break;
+        if (choice >= 1 && choice <= 4)
+        {
+            cout << "\nRESULTS";
 
-    case 4:
-        selectionSort(arr);
-        break;
+            for (int k = 0; k < 5; k++)
+            {
+                int n = sizes[k];
 
-    default:
-        cout << "Invalid Choice!";
-        return 0;
-    }
+                int* arr = new int[n];
 
-    clock_t end = clock();
+                for (int i = 0; i < n; i++)
+                {
+                    arr[i] = rand();
+                }
 
-    cout << "\nSorted Array: ";
+                iterations = 0;
+                swaps = 0;
 
-    for (int i = 0; i < 5; i++)
-    {
-        cout << arr[i] << " ";
-    }
+                clock_t start = clock();
 
-    double timeTaken = double(end - start) / CLOCKS_PER_SEC;
+                switch (choice)
+                {
+                case 1:
+                    bubbleSort(arr, n);
+                    break;
 
-    cout << "\nSwaps performed: " << swaps;
-    cout << "\nComparisons performed: " << comparisons;
-    cout << "\nTime taken to perform: " << timeTaken;
-    
+                case 2:
+                    insertionSort(arr, n);
+                    break;
 
-    cout << endl;
+                case 3:
+                    quickSort(arr, 0, n - 1);
+                    break;
+
+                case 4:
+                    selectionSort(arr, n);
+                    break;
+                }
+
+                clock_t end = clock();
+
+                double timeTaken =
+                    double(end - start) / CLOCKS_PER_SEC;
+
+                cout << "\n\nInput Size: " << n;
+                cout << "\nSwaps: " << swaps;
+                cout << "\nIterations: " << iterations;
+                cout << "\nClock Time: " << timeTaken << " seconds";
+            }
+        }
+        else if (choice != 5)
+        {
+            cout << "\nInvalid Choice!";
+        }
+
+    } while (choice != 5);
 
     return 0;
 }
