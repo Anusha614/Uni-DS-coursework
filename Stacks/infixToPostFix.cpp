@@ -1,8 +1,41 @@
 #include <iostream>
-#include <stack>
 #include <string>
 #include <cctype>
 using namespace std;
+
+#define MAX 100
+
+char s[MAX];
+int top = -1;
+
+void push(char ch) {
+    if (top == MAX - 1) {
+        cout << "Stack Overflow!";
+        return;
+    }
+
+    s[++top] = ch;
+}
+
+void pop() {
+    if (top == -1) {
+        return;
+    }
+
+    top--;
+}
+
+char peek() {
+    if (top == -1) {
+        return '\0';
+    }
+
+    return s[top];
+}
+
+bool isEmpty() {
+    return top == -1;
+}
 
 int precedence(char op) {
     if (op == '^')
@@ -20,14 +53,15 @@ bool isOperator(char ch) {
            ch == '/' || ch == '%' || ch == '^';
 }
 
-string infixToPostfix (string infix) {
+string infixToPostfix(string infix) {
 
-    stack<char> s;
+    top = -1;
     string postfix = "";
 
-    for (int i = 0; i<infix.length(); i++) {
+    for (int i = 0; i < infix.length(); i++) {
 
         char ch = infix[i];
+
         //base cases:
 
         //char is a space
@@ -39,51 +73,51 @@ string infixToPostfix (string infix) {
             postfix += ch;
         }
         //char is opening bracket
-        else if(ch == '(') {
-            s.push(ch);
+        else if (ch == '(') {
+            push(ch);
         }
         //char is closing bracket
         else if (ch == ')') {
-            while (!s.empty() && s.top() != '(') {
-                postfix += s.top();
-                s.pop();
+            while (!isEmpty() && peek() != '(') {
+                postfix += peek();
+                pop();
             }
 
-            if (s.empty()) {
+            if (isEmpty()) {
                 return "INVALID";
             }
 
-            s.pop();
+            pop();
         }
         //char is operator
         else if (isOperator(ch)) {
-            while (!s.empty() && s.top() != '(' &&
-                   (precedence(s.top()) > precedence(ch) ||
-                   (precedence(s.top()) == precedence(ch) && ch != '^'))) {
-                postfix += s.top();
-                s.pop();
+            while (!isEmpty() && peek() != '(' &&
+                   (precedence(peek()) > precedence(ch) ||
+                   (precedence(peek()) == precedence(ch) && ch != '^'))) {
+                postfix += peek();
+                pop();
             }
-            s.push(ch);
+
+            push(ch);
         }
         else {
             return "INVALID";
         }
-
     }
 
-    while (!s.empty()) {
-        if (s.top() == '(') {
+    while (!isEmpty()) {
+        if (peek() == '(') {
             return "INVALID";
         }
 
-        postfix += s.top();
-        s.pop();
+        postfix += peek();
+        pop();
     }
 
     return postfix;
 }
 
-int main (void) {
+int main() {
 
     string infix;
 
@@ -96,7 +130,7 @@ int main (void) {
         cout << "Infix input was invalid to be converted to postfix.";
     }
     else {
-        cout << "postfix: " << postfix;
+        cout << "Postfix: " << postfix;
     }
 
     return 0;
